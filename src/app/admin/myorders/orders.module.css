@@ -1,0 +1,65 @@
+.modalHeader {
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}
+
+.modalTitle {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-2));
+  font-weight: 700;
+}
+
+.details {
+  font-size: var(--mantine-font-size-sm);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.label {
+  width: rem(130px);
+}
+
+.card {
+  background-color: rgb(161, 188, 238);
+}
+
+.title {
+  color: #0969ff;
+}
+
+.cellaprov {
+  background-color: var(--mantine-color-green-5);
+  color: white;
+}
+
+.cellcot {
+  background-color: var(--mantine-color-orange-5);
+  color: white;
+}
+
+.cellreqaprov {
+  background-color: var(--mantine-color-blue-5);
+  color: white;
+}
+
+.cellcancel {
+  background-color: var(--mantine-color-red-5);
+  color: white;
+}
+
+.cellpedconf {
+  background-color: var(--mantine-color-teal-5);
+  color: white;
+}
+
+.cellfinanc {
+  background-color: var(--mantine-color-grape-5);
+  color: white;
+}
+
+.celluser {
+  background-color: var(--mantine-color-pink-5);
+  color: white;
+}
+
+.cellentregue {
+  background-color: var(--mantine-color-indigo-7);
+  color: white;
+}

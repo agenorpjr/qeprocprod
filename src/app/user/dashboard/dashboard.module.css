@@ -1,0 +1,21 @@
+.card1 {
+  background-color: var(--mantine-color-blue-5);
+  color: white;
+  min-height: 30vh;
+}
+.card2 {
+  background-color: var(--mantine-color-teal-5);
+  color: white;
+  min-height: 30vh;
+}
+.card3 {
+  background-color: var(--mantine-color-red-5);
+  color: white;
+  min-height: 30vh;
+}
+
+.card4 {
+  background-color: var(--mantine-color-indigo-5);
+  color: white;
+  min-height: 30vh;
+}

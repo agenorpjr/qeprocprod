@@ -1,0 +1,60 @@
+.modalHeader {
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}
+
+.modalTitle {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-2));
+  font-weight: 700;
+}
+
+.details {
+  font-size: var(--mantine-font-size-sm);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.label {
+  width: rem(130px);
+}
+
+.card {
+  background-color: rgb(161, 188, 238);
+}
+
+.title {
+  color: #0969ff;
+}
+
+.cellaprov {
+  background-color: teal;
+  color: white;
+}
+
+.cellcot {
+  background-color: #b87700;
+  color: white;
+}
+
+.cellreq {
+  background-color: #0990ff;
+  color: white;
+}
+
+.cellcancel {
+  background-color: #ff0909;
+  color: white;
+}
+
+.cellsolic {
+  background-color: #00b63d;
+  color: white;
+}
+
+.cellfinanc {
+  background-color: #998200;
+  color: white;
+}
+
+.celluser {
+  background-color: #8b0062;
+  color: white;
+}

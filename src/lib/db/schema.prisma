@@ -1,0 +1,233 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String
+  password      String
+  createdAt     DateTime?       @db.DateTime(0)
+  emailVerified DateTime?
+  image         String?
+  name          String
+  updatedAt     DateTime?       @updatedAt @db.DateTime(0)
+  username      String?
+  role          String
+  purchaser     Int             @default(0)
+  approver      Int             @default(0)
+  accounts      Account?
+  Authenticator Authenticator[]
+  sessions      Session[]
+  drafts        drafts[]
+
+  orders orders[]
+}
+
+model Account {
+  id                       String   @id @default(cuid())
+  userId                   String   @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?  @db.Text
+  access_token             String?  @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?  @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  user                     User     @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+model companies {
+  company_id   Int            @id @default(autoincrement())
+  company      String?        @db.VarChar(255)
+  cnpj         Int
+  drafts       drafts[]
+  orders       orders[]
+  cost_centers cost_centers[]
+}
+
+model cost_centers {
+  cost_center_id Int       @id @default(autoincrement())
+  cost_center    String    @db.VarChar(250)
+  company_id     Int
+  drafts         drafts[]
+  orders         orders[]
+  companies      companies @relation(fields: [company_id], references: [company_id], onDelete: NoAction, onUpdate: NoAction, map: "cc_cost_center_id")
+
+  @@index([company_id], map: "cc_company_id_idx")
+}
+
+model delivery_addresses {
+  address_id Int    @id @unique(map: "address_id_UNIQUE")
+  address    String @db.VarChar(255)
+}
+
+model draft_products_list {
+  draft_product_list_id Int      @id @default(autoincrement())
+  draft_id              Int
+  product_id            Int
+  measure_id            Int
+  quantity              Int
+  reference             String?  @db.Text
+  obs                   String?  @db.Text
+  drafts                drafts   @relation(fields: [draft_id], references: [draft_id], onDelete: NoAction, onUpdate: NoAction, map: "dpl_draft_id")
+  measures              measures @relation(fields: [measure_id], references: [measure_id], onDelete: NoAction, onUpdate: NoAction, map: "dpl_measure_id")
+  products              products @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction, map: "dpl_product_id")
+
+  @@index([draft_id], map: "draft_id_idx")
+  @@index([measure_id], map: "measure_id_idx")
+  @@index([product_id], map: "product_id_idx")
+}
+
+model order_products_list {
+  order_product_list_id Int        @id @default(autoincrement())
+  order_id              Int
+  product_id            Int
+  measure_id            Int
+  quantity              Int
+  reference             String?    @db.Text
+  obs                   String?    @db.Text
+  supplier_id           Int?
+  purchase_number       String?
+  amount                Float?     @db.Float()
+  delivery_expected     DateTime?
+  orders                orders     @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "dpl_order_id")
+  measures              measures?  @relation(fields: [measure_id], references: [measure_id], onDelete: NoAction, onUpdate: NoAction, map: "opl_measure_id")
+  products              products?  @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction, map: "opl_product_id")
+  suppliers             suppliers? @relation(fields: [supplier_id], references: [supplier_id], onDelete: NoAction, onUpdate: NoAction, map: "opl_supplier_id")
+
+  @@index([measure_id], map: "measure_id_idx")
+  @@index([order_id], map: "order_id_idx")
+  @@index([product_id], map: "product_id_idx")
+  @@index([supplier_id], map: "supplier_id_idx")
+}
+
+model drafts {
+  draft_id            Int                   @id @default(autoincrement())
+  draft_number        String                @db.VarChar(5)
+  user_id             String
+  company_id          Int?
+  delivery_address    String?               @db.VarChar(255)
+  cost_center_id      Int?
+  project_id          Int?
+  created_at          DateTime              @default(now())
+  delivery_at         DateTime?             @db.DateTime()
+  draft_status        String                @default("disable")
+  approver_id         String
+  requester           String?
+  draft_products_list draft_products_list[]
+  companies           companies?            @relation(fields: [company_id], references: [company_id], onDelete: NoAction, onUpdate: NoAction, map: "d_company_id")
+  User                User                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "d_user_id")
+  cost_centers        cost_centers?         @relation(fields: [cost_center_id], references: [cost_center_id], onDelete: NoAction, onUpdate: NoAction, map: "d_cost_center_id")
+  projects            projects?             @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction, map: "d_project_id")
+
+  @@index([company_id], map: "d_company_id_idx")
+  @@index([user_id], map: "d_user_id_idx")
+  @@index([cost_center_id], map: "d_cost_center_id_idx")
+  @@index([project_id], map: "d_project_id_idx")
+  @@index([approver_id], map: "d_approver_id_idx")
+}
+
+model measures {
+  measure_id          Int                   @id @default(autoincrement())
+  measure             String                @db.VarChar(45)
+  draft_products_list draft_products_list[]
+  order_products_list order_products_list[]
+}
+
+model orders {
+  order_id            Int                   @id @default(autoincrement())
+  order_number        Int
+  user_id             String
+  company_id          Int
+  delivery_address    String                @db.VarChar(255)
+  project_id          Int?
+  cost_center_id      Int?
+  approver_id         String
+  created_at          DateTime              @default(now()) @db.DateTime(0)
+  delivery_at         DateTime              @db.DateTime(0)
+  purchaser           String?
+  status              String?               @default("Em Aprovação")
+  requester           String?
+  companies           companies             @relation(fields: [company_id], references: [company_id], onDelete: NoAction, onUpdate: NoAction, map: "o_company_id")
+  User                User                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "o_user_id")
+  cost_centers        cost_centers?         @relation(fields: [cost_center_id], references: [cost_center_id], onDelete: NoAction, onUpdate: NoAction, map: "o_cost_center_id")
+  projects            projects?             @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction, map: "o_project_id")
+  order_products_list order_products_list[]
+
+  @@index([approver_id], map: "o_approver_id_idx")
+  @@index([purchaser], map: "o_purchser_idx")
+  @@index([company_id], map: "o_company_id_idx")
+  @@index([user_id], map: "o_user_id_idx")
+  @@index([cost_center_id], map: "o_cost_center_id_idx")
+  @@index([project_id], map: "o_project_id_idx")
+}
+
+model products {
+  product_id          Int                   @id @default(autoincrement())
+  description         String                @db.VarChar(250)
+  draft_products_list draft_products_list[]
+  order_products_list order_products_list[]
+}
+
+model projects {
+  project_id Int      @id @default(autoincrement())
+  project    String   @db.VarChar(250)
+  drafts     drafts[]
+  orders     orders[]
+}
+
+model suppliers {
+  supplier_id         Int                   @id @default(autoincrement())
+  supplier            String                @db.VarChar(255)
+  cnpj                String                @db.VarChar(14)
+  order_products_list order_products_list[]
+}
