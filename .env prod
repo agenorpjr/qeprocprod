@@ -1,0 +1,7 @@
+NEXTAUTH_SECRET="yM2S4HYffSfw3w3laB77i9yTDk1zKz4ilM4hFxEpYrE=" # Added by `npx auth`. Read more: https://cli.authjs.dev
+DATABASE_URL="mysql://root:Quant@2025(r)@mysql:3306/qeprocdb"
+AUTH_TRUST_HOST=true
+MYSQL_ROOT_PASSWORD=Quant@2025(r)
+MYSQL_DATABASE=qeprocdb
+MYSQL_USER=eprocuser
+MYSQL_PASSWORD=Quant@2025()
